@@ -28,46 +28,12 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = './dog_image'
 CORS(app)
 
-
-"""
-app.config['MONGODB_SETTINGS'] = {
-    'host': os.environ['MONGODB_HOST'],
-    'username': os.environ['MONGODB_USERNAME'],
-    'password': os.environ['MONGODB_PASSWORD'],
-    'db': 'webapp'
-}
-
-db = MongoEngine()
-db.init_app(app)
-
-class dog_info(db.Document):
-    _id = db.StringField(max_length=60)
-    id_dog = db.StringField(max_length=60)
-    en_name_dog = db.StringField(max_length=60)
-    kr_name_dog = db.StringField(max_length=60)
-    adapt_dog = db.StringField(max_length=60)
-    kind_dog = db.StringField(max_length=60)
-    health_dog = db.StringField(max_length=60)
-    train_dog = db.StringField(max_length=60)
-    physic_dog = db.StringField(max_length=60)
-    warning_dog = db.StringField(max_length=600)
-    feature_dog = db.StringField(max_length=600)
-    group_dog = db.StringField(max_length=60)
-    height_dog = db.StringField(max_length=60)
-    weight_dog = db.StringField(max_length=60)
-    lifespan_dog = db.StringField(max_length=60)
-    hashtag1_dog = db.StringField(max_length=60)
-    hashtag2_dog = db.StringField(max_length=60)
-    hashtag3_dog = db.StringField(max_length=60)
-"""
-
 @app.route('/', methods = ['POST']) # 접속하는 url
 def getImg():
     if request.method == 'POST':
         pic_data = request.files['file']
         filename = secure_filename(pic_data.filename) # 업로드 된 파일의 이름이 안전한가를 확인해주는 함수이다. 해킹 공격에 대해 보안을 하고자 사용되기도 한다.
         pic_data.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        #pred('./dog_image/{0}'.format(filename))
         return jsonify(pred('./dog_image/{0}'.format(filename)))
 
 @app.route('/getDB', methods = ['POST']) # 접속하는 url
@@ -78,7 +44,6 @@ def giveDB():
         row = []
         for i in results:
             row.append(i)
-        #return jsonify(loads(dumps(results)))
         return jsonify(row[0])
     
 def pred(img_path):
@@ -211,13 +176,11 @@ def pred(img_path):
     test_image = image / 255
     test_image = test_image.reshape((-1,) + test_image.shape)
     y_pred = model.predict(test_image)
-    #y_pred = model.predict(img_path)
 
     class_per = y_pred[0]
     icecream = dict(zip(target, class_per))
 
     row.append(img_path)
-    #row.append(img_path[30:-4])
 
     count = 0
     for w in sorted(icecream, key=icecream.get, reverse=True):
@@ -226,8 +189,7 @@ def pred(img_path):
         count += 1
         if count == 3: break
 
-    #return("{0} : 정답, {1} : {2}, {3} : {4}, {5} : {6}".format(row[0], row[1], row[2], row[3], row[4], row[5], row[6]))
-    return ({#json.dumps
+    return ({
         'answer' : row[0],
         'predFst' : row[1],
         'perFst' : str(row[2]),
@@ -236,7 +198,6 @@ def pred(img_path):
         'predThd' : row[5],
         'perThd' : str(row[6]),
     })
-    #return row
 
 if __name__=="__main__":
     app.run(debug=True, port=5000)
