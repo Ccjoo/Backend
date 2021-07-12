@@ -19,7 +19,7 @@ except:
     model = tf.keras.models.load_model('./model/20210625_model_ft_10_2.h5')
 
 #DB
-client = MongoClient('mongodb+srv://seyeon:choi6738@cluster0.hrldm.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
+client = MongoClient('DATABASE LINK')
 db = client.dogimformation
 collection = db.dog_db
 
